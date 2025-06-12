@@ -5,6 +5,34 @@ const jwt = require("jsonwebtoken");
 const pool = require("../db");
 const verifyToken  = require("../middlewares/verifyToken")
 // 🔐 Sign Up API
+
+/**
+ * @swagger
+ * /api/superadmin/signup:
+ *   post:
+ *     summary: Register a new superadmin
+ *     tags: [Superadmin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               college_name:
+ *                 type: string
+ *               college_code:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Superadmin registered
+ *       400:
+ *         description: Email already exists
+ */
 router.post("/signup", async (req, res) => {
   const { email, password, college_name, college_code } = req.body;
 
@@ -22,13 +50,54 @@ router.post("/signup", async (req, res) => {
       [email, hashedPassword, college_name, college_code]
     );
 
-    res.status(201).json({ message: "Superadmin registered", data: result.rows[0] });
+    res.status(201).json({ message: "Registration successful. You may now log in.", data: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // 🔐 Sign In API
+/**
+ * @swagger
+ * /api/superadmin/signin:
+ *   post:
+ *     summary: Superadmin sign-in
+ *     tags: [Superadmin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: admin@example.com
+ *               password:
+ *                 type: string
+ *                 example: yourPassword123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Invalid email
+ *       401:
+ *         description: Invalid password
+ *       500:
+ *         description: Server error
+ */
 router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
 
@@ -46,11 +115,14 @@ router.post("/signin", async (req, res) => {
 
     const token = jwt.sign({ id: result.rows[0].id }, "secretkey", { expiresIn: "1d" });
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token ,status:1 });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+//---------------Create Teacher
 
 router.post("/createTeacher", verifyToken, async (req, res) => {
   const { teacher_name, department, user_id, password } = req.body;
@@ -65,40 +137,21 @@ router.post("/createTeacher", verifyToken, async (req, res) => {
       [teacher_name, department, user_id, hashedPassword, superadmin_id]
     );
 
-    res.status(201).json({ message: "Teacher created successfully", data: result.rows[0] });
+    res.status(201).json({status:1, message: "Teacher created successfully", data: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
-// 🔎 Get all teachers created by the logged-in superadmin
-router.get("/getAllTeachers", verifyToken, async (req, res) => {
-  const superadmin_id = req.user.id;
-
-  try {
-    const result = await pool.query(
-      `SELECT id, teacher_name, department, user_id, password, created_at 
-       FROM teachers 
-       WHERE superadmin_id = $1 
-       ORDER BY created_at DESC`,
-      [superadmin_id]
-    );
-
-    res.status(200).json({ teachers: result.rows });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 ///-------------delete teacher 
+
 router.delete("/deleteTeacher/:id", verifyToken, async (req, res) => {
   const teacherId = req.params.id;
   const superadmin_id = req.user.id;
 
   try {
-    // Make sure the teacher belongs to this superadmin
+    // Optional: log for debugging
+    console.log(`Attempting to delete teacher with ID: ${teacherId} by superadmin: ${superadmin_id}`);
+
     const result = await pool.query(
       `DELETE FROM teachers 
        WHERE id = $1 AND superadmin_id = $2 
@@ -110,10 +163,12 @@ router.delete("/deleteTeacher/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ message: "Teacher not found or unauthorized" });
     }
 
-    res.status(200).json({ message: "Teacher deleted successfully", deleted: result.rows[0] });
+    res.status(200).json({ message: "Teacher deleted successfully", deletedTeacher: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error deleting teacher:", err.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 module.exports = router;
