@@ -142,6 +142,51 @@ router.post("/createTeacher", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+//----------------getAllTeacher
+router.get("/getAllTeachers", verifyToken, async (req, res) => {
+  const superadmin_id = req.user.id;
+
+ try {
+    // Get all teachers
+    const teachersResult = await pool.query(
+      `SELECT 
+      id,
+         teacher_name AS name, 
+         department, 
+         user_id AS "userId", 
+         password, 
+         created_at 
+       FROM teachers 
+       WHERE superadmin_id = $1 
+       ORDER BY created_at DESC`,
+      [superadmin_id]
+    );
+
+    const teachers = teachersResult.rows;
+
+    // Get college info
+    const collegeResult = await pool.query(
+      `SELECT college_name, college_code 
+       FROM superadmins 
+       WHERE id = $1`,
+      [superadmin_id]
+    );
+
+    const collegeInfo = collegeResult.rows[0];
+
+    res.status(200).json({
+      teachers,
+      totalTeachers: teachers.length,
+      college: collegeInfo,
+    });
+  }
+
+  
+   catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 ///-------------delete teacher 
 
 router.delete("/deleteTeacher/:id", verifyToken, async (req, res) => {
@@ -163,9 +208,42 @@ router.delete("/deleteTeacher/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ message: "Teacher not found or unauthorized" });
     }
 
-    res.status(200).json({ message: "Teacher deleted successfully", deletedTeacher: result.rows[0] });
+    res.status(200).json({status:1, message: "Teacher deleted successfully", deletedTeacher: result.rows[0] });
   } catch (err) {
     console.error("Error deleting teacher:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+router.put("/updateTeacher/:id", verifyToken, async (req, res) => {
+  const teacherId = req.params.id;
+  const superadmin_id = req.user.id;
+  const { name, department, userId, password } = req.body;
+
+  try {
+    // Optional: Debug log
+    console.log(`Updating teacher ID: ${teacherId} by superadmin: ${superadmin_id}`);
+
+    const result = await pool.query(
+      `UPDATE teachers 
+       SET 
+         teacher_name = $1, 
+         department = $2, 
+         user_id = $3, 
+         password = $4 
+       WHERE id = $5 AND superadmin_id = $6 
+       RETURNING id, teacher_name AS name, department, user_id AS "userId", password`,
+      [name, department, userId, password, teacherId, superadmin_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Teacher not found or unauthorized" });
+    }
+
+    res.status(200).json({ status: 1, message: "Teacher updated successfully", updatedTeacher: result.rows[0] });
+  } catch (err) {
+    console.error("Error updating teacher:", err.message);
     res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -6,10 +6,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 const superadminRoutes = require("./routes/superAdminRoutes");
+const teacherRoutes = require("./routes/teacherRoute");
 const { swaggerUi, specs } = require("./swagger");
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/api/superadmin", superadminRoutes);
+app.use("/api/teacher", teacherRoutes);
 
 
 console.log("index")
