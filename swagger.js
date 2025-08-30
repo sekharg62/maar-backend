@@ -1,6 +1,5 @@
-// swagger.js
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 const options = {
   definition: {
@@ -8,7 +7,7 @@ const options = {
     info: {
       title: "Your API Name",
       version: "1.0.0",
-      description: "API documentation for your Node.js project"
+      description: "API documentation for your Node.js project",
     },
     servers: [
       {
@@ -16,9 +15,9 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // path to your route files with Swagger comments
+  apis: ["./routes/*.js"], // adjust if needed
 };
 
 const specs = swaggerJsdoc(options);
 
-module.exports = { swaggerUi, specs };
+export { swaggerUi, specs };

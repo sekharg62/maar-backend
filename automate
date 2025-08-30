@@ -3,7 +3,7 @@ app.post("/submit-form", async (req, res) => {
 
   console.log("roll and pass::", roll, password);
 
-  const browser = await puppeteer.launch({ headless: false }); // use headless: false to see actions
+  const browser = await puppeteer.launch({ headless: false , defaultViewport: null,}); // use headless: false to see actions
   const page = await browser.newPage();
   await page.goto("https://makaut1.ucanapply.com/smartexam/public/");
 
