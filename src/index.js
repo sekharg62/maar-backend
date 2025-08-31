@@ -97,7 +97,7 @@ app.get("/", async (req, res) => {
 
 
 //----- Server Running
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on port:${port}`);
-  console.log("Swagger docs at http://localhost:3000/api-docs");
+  //console.log("Swagger docs at http://localhost:3000/api-docs");
 });
