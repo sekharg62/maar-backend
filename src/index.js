@@ -36,7 +36,13 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 
-
+app.get("/api/public/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Public route is working 🚀",
+    timestamp: new Date().toISOString(),
+  });
+});
 app.use("/api/superadmin", superadminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
