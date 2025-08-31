@@ -12,7 +12,7 @@ import { swaggerUi, specs } from '../swagger.js';
 import errorHandling from './middlewares/errorHandler.js';
 import createUserTable from './data/createUserTable.js';
 import puppeteer from 'puppeteer';
-
+import https from 'https';
 dotenv.config();
 
 const app = express();
@@ -101,9 +101,12 @@ app.get("/", async (req, res) => {
   }
 });
 
+const sslOptions = {
+  key: fs.readFileSync("/path/to/private.key"),       // Replace with your SSL key
+  cert: fs.readFileSync("/path/to/certificate.crt"), // Replace with your SSL cert
+};
 
 //----- Server Running
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port:${port}`);
-  //console.log("Swagger docs at http://localhost:3000/api-docs");
+https.createServer(sslOptions, app).listen(443, "0.0.0.0", () => {
+  console.log(`Server running securely at https://api.makautstudents.help`);
 });
