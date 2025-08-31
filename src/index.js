@@ -13,6 +13,7 @@ import errorHandling from './middlewares/errorHandler.js';
 import createUserTable from './data/createUserTable.js';
 import puppeteer from 'puppeteer';
 import https from 'https';
+import fs from "fs";
 dotenv.config();
 
 const app = express();
@@ -101,12 +102,13 @@ app.get("/", async (req, res) => {
   }
 });
 
-const sslOptions = {
-  key: fs.readFileSync("/path/to/private.key"),       // Replace with your SSL key
-  cert: fs.readFileSync("/path/to/certificate.crt"), // Replace with your SSL cert
+const options = {
+  key: fs.readFileSync("/etc/ssl/mydomain/domain.key"),
+  cert: fs.readFileSync("/etc/ssl/mydomain/domain.crt"),
+  ca: fs.readFileSync("/etc/ssl/mydomain/ca_bundle.crt"),
 };
 
 //----- Server Running
-https.createServer(sslOptions, app).listen(443, "0.0.0.0", () => {
-  console.log(`Server running securely at https://api.makautstudents.help`);
+https.createServer(options, app).listen(443, () => {
+  console.log("Secure server running on https://yourdomain.com");
 });
