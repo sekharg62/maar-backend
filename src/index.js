@@ -11,9 +11,7 @@ import userRoutes from "./routes/userRoute.js"
 import { swaggerUi, specs } from '../swagger.js';
 import errorHandling from './middlewares/errorHandler.js';
 import createUserTable from './data/createUserTable.js';
-import puppeteer from 'puppeteer';
-import https from 'https';
-import fs from "fs";
+
 dotenv.config();
 
 const app = express();
@@ -54,7 +52,7 @@ app.use(errorHandling)
 
 ///Create table before starting the server
 createUserTable()
-app.post("/submit-form", async (req, res) => {
+/* app.post("/submit-form", async (req, res) => {
   const { roll, password } = req.body;
 
   console.log("roll and pass::", roll, password);
@@ -85,7 +83,7 @@ await page.click('a[onclick="openLoginPage(\'4\');"]');
   console.log("Login completed.");
 
   // await browser.close();
-});
+}); */
 
 
 console.log("index")
@@ -102,13 +100,9 @@ app.get("/", async (req, res) => {
   }
 });
 
-const options = {
-  key: fs.readFileSync("/etc/ssl/mydomain/domain.key"),
-  cert: fs.readFileSync("/etc/ssl/mydomain/domain.crt"),
-  ca: fs.readFileSync("/etc/ssl/mydomain/ca_bundle.crt"),
-};
+
 
 //----- Server Running
-https.createServer(options, app).listen(443, () => {
-  console.log("Secure server running on https://yourdomain.com");
+app.listen(port, () => {
+  console.log(`Server running on port:${port}`);
 });
