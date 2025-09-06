@@ -34,7 +34,7 @@ export const loginTeacher = async (req, res) => {
 
     const token = jwt.sign(
       { id: teacher.id, role: "teacher" },
-      process.env.JWT_SECRET || "yoursecretkey",
+      process.env.JWT_SECRET || "your_secure_secret_key",
       { expiresIn: "1d" }
     );
 
