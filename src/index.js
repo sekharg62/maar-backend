@@ -11,7 +11,6 @@ import userRoutes from "./routes/userRoute.js"
 import { swaggerUi, specs } from '../swagger.js';
 import errorHandling from './middlewares/errorHandler.js';
 import createUserTable from './data/createUserTable.js';
-import puppeteer from 'puppeteer';
 
 dotenv.config();
 
@@ -36,7 +35,13 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 
-
+app.get("/api/public/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Public route is working 🚀",
+    timestamp: new Date().toISOString(),
+  });
+});
 app.use("/api/superadmin", superadminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
@@ -47,7 +52,7 @@ app.use(errorHandling)
 
 ///Create table before starting the server
 createUserTable()
-app.post("/submit-form", async (req, res) => {
+/* app.post("/submit-form", async (req, res) => {
   const { roll, password } = req.body;
 
   console.log("roll and pass::", roll, password);
@@ -78,7 +83,7 @@ await page.click('a[onclick="openLoginPage(\'4\');"]');
   console.log("Login completed.");
 
   // await browser.close();
-});
+}); */
 
 
 console.log("index")
@@ -96,8 +101,8 @@ app.get("/", async (req, res) => {
 });
 
 
+
 //----- Server Running
 app.listen(port, () => {
   console.log(`Server running on port:${port}`);
-  console.log("Swagger docs at http://localhost:3000/api-docs");
 });
