@@ -18,7 +18,7 @@ const { Pool } = pkg;
   },
 }); */
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: "postgresql://postgres.spyvybfefmutbjhpqklv:sekharG@2002@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
   ssl: {
     rejectUnauthorized: false, // allows self-signed cert from Supabase
   },
