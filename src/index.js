@@ -88,10 +88,11 @@ await page.click('a[onclick="openLoginPage(\'4\');"]');
 
 console.log("index")
 //-------Testing POSTGRES Connect.get
-app.get("/", async (req, res) => {
+app.get("/test", async (req, res) => {
   try {
     const result = await pool.query("SELECT current_database()");
     //console.log("Query result:", result.rows); // debug log
+    console.log("resule:",result)
 
     res.send(`The database name is: ${result.rows[0].current_database}`);
   } catch (error) {
