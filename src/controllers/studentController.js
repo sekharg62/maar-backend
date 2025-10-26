@@ -330,7 +330,7 @@ export const loginStudent = async (req, res) => {
       id: student.id,
       rollNo: student.roll_no,
       role: "student",
-      code:instituteDetails.institute_code,
+      code: instituteDetails.institute_code,
       admissionYear: student.admission_year,
     };
 
@@ -344,6 +344,7 @@ export const loginStudent = async (req, res) => {
       message: "Login successful",
 
       data: {
+        role: "student",
         token: token,
         id: student.id,
         name: student.name,
@@ -407,7 +408,7 @@ export const getStudentDetails = async (req, res) => {
       message: "Student fetched successfully",
       data: {
         ...student,
-         institute: instituteDetails,
+        institute: instituteDetails,
         current_year: yearOfStudy,
         points: {
           "1st Year": { uploaded: 25, approved: 20 },
@@ -1756,7 +1757,8 @@ export const getActivityDetails = async (req, res) => {
             name: "Relief & Charitable Activities",
             max: 40,
             remain:
-              40 - (yeardata?.secondyear?.sum_5a + yeardata?.secondyear?.sum_5b),
+              40 -
+              (yeardata?.secondyear?.sum_5a + yeardata?.secondyear?.sum_5b),
             already_acquired:
               yeardata?.secondyear?.sum_5a + yeardata?.secondyear?.sum_5b,
             subpoints: [
@@ -1927,462 +1929,464 @@ export const getActivityDetails = async (req, res) => {
           },
         ],
         thirdyear: [
-  {
-    name: "MOOCS",
-    max: 40,
-    remain:
-      40 -
-      ((yeardata?.thirdyear?.sum_1a || 0) +
-        (yeardata?.thirdyear?.sum_1b || 0) +
-        (yeardata?.thirdyear?.sum_1c || 0) +
-        (yeardata?.thirdyear?.sum_1d || 0)),
-    already_acquired:
-      (yeardata?.thirdyear?.sum_1a || 0) +
-      (yeardata?.thirdyear?.sum_1b || 0) +
-      (yeardata?.thirdyear?.sum_1c || 0) +
-      (yeardata?.thirdyear?.sum_1d || 0),
-    subpoints: [
-      { name: "10 weeks", point_per_activity: 20 },
-      { name: "8 weeks", point_per_activity: 15 },
-      { name: "4 weeks", point_per_activity: 10 },
-      { name: "2 weeks", point_per_activity: 5 },
-    ],
-  },
-  {
-    name: "Tech Fest",
-    subpoints: [
-      {
-        name: "Organizer",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.thirdyear?.sum_2a,
-        already_acquired: yeardata?.thirdyear?.sum_2a,
-      },
-      {
-        name: "Participant",
-        point_per_activity: 3,
-        max: 6,
-        remain: 6 - yeardata?.thirdyear?.sum_2b,
-        already_acquired: yeardata?.thirdyear?.sum_2b,
-      },
-    ],
-  },
-  {
-    name: "Rural Reporting",
-    point_per_activity: 5,
-    max: 10,
-    remain: 10 - yeardata?.thirdyear?.sum_3,
-    already_acquired: yeardata?.thirdyear?.sum_3,
-  },
-  {
-    name: "Tree Plantation",
-    point_per_activity: 1,
-    max: 10,
-    remain: 10 - yeardata?.thirdyear?.sum_4,
-    already_acquired: yeardata?.thirdyear?.sum_4,
-  },
-  {
-    name: "Relief & Charitable Activities",
-    max: 40,
-    remain: 40 - (yeardata?.thirdyear?.sum_5a + yeardata?.thirdyear?.sum_5b),
-    already_acquired:
-      yeardata?.thirdyear?.sum_5a + yeardata?.thirdyear?.sum_5b,
-    subpoints: [
-      {
-        name: "Collection of Fund",
-        point_per_activity: 5,
-      },
-      {
-        name: "Relief Work Team",
-        point_per_activity: 20,
-      },
-    ],
-  },
-  {
-    name: "Participation in Debate",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.thirdyear?.sum_6,
-    already_acquired: yeardata?.thirdyear?.sum_6,
-  },
-  {
-    name: "Publication",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.thirdyear?.sum_7,
-    already_acquired: yeardata?.thirdyear?.sum_7,
-  },
-  {
-    name: "Research Publication",
-    point_per_activity: 15,
-    max: 30,
-    remain: 30 - yeardata?.thirdyear?.sum_8,
-    already_acquired: yeardata?.thirdyear?.sum_8,
-  },
-  {
-    name: "Innovation Project",
-    point_per_activity: 30,
-    max: 60,
-    remain: 60 - yeardata?.thirdyear?.sum_9,
-    already_acquired: yeardata?.thirdyear?.sum_9,
-  },
-  {
-    name: "Blood Donation",
-    subpoints: [
-      {
-        name: "Donate Blood",
-        point_per_activity: 8,
-        max: 16,
-        remain: 16 - yeardata?.thirdyear?.sum_10a,
-        already_acquired: yeardata?.thirdyear?.sum_10a,
-      },
-      {
-        name: "Organize Blood Donation Camp",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_10b,
-        already_acquired: yeardata?.thirdyear?.sum_10b,
-      },
-    ],
-  },
-  {
-    name: "Sports",
-    subpoints: [
-      {
-        name: "Personal",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_11a,
-        already_acquired: yeardata?.thirdyear?.sum_11a,
-      },
-      {
-        name: "College",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.thirdyear?.sum_11b,
-        already_acquired: yeardata?.thirdyear?.sum_11b,
-      },
-      {
-        name: "University",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_11c,
-        already_acquired: yeardata?.thirdyear?.sum_11c,
-      },
-      {
-        name: "District",
-        point_per_activity: 12,
-        max: 24,
-        remain: 24 - yeardata?.thirdyear?.sum_11d,
-        already_acquired: yeardata?.thirdyear?.sum_11d,
-      },
-      {
-        name: "Other",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_11e,
-        already_acquired: yeardata?.thirdyear?.sum_11e,
-      },
-      {
-        name: "National",
-        point_per_activity: 20,
-        max: 40,
-        remain: 40 - yeardata?.thirdyear?.sum_11f,
-        already_acquired: yeardata?.thirdyear?.sum_11f,
-      },
-    ],
-  },
-  {
-    name: "Activities in a Professional Society/Student Chapter",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.thirdyear?.sum_12,
-    already_acquired: yeardata?.thirdyear?.sum_12,
-  },
-  {
-    name: "Relevant Industry Visit & Report",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.thirdyear?.sum_13,
-    already_acquired: yeardata?.thirdyear?.sum_13,
-  },
-  {
-    name: "Community Service & Allied Activities",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.thirdyear?.sum_14,
-    already_acquired: yeardata?.thirdyear?.sum_14,
-  },
-  {
-    name: "Self-Entrepreneurship",
-    subpoints: [
-      {
-        name: "Organise Entrepreneurship Programmes",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_15a,
-        already_acquired: yeardata?.thirdyear?.sum_15a,
-      },
-      {
-        name: "Take Part in Entrepreneurship",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.thirdyear?.sum_15b,
-        already_acquired: yeardata?.thirdyear?.sum_15b,
-      },
-      {
-        name: "Film Making",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_15c,
-        already_acquired: yeardata?.thirdyear?.sum_15c,
-      },
-      {
-        name: "Submit Business Plan",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.thirdyear?.sum_15d,
-        already_acquired: yeardata?.thirdyear?.sum_15d,
-      },
-      {
-        name: "Work for Start-up",
-        point_per_activity: 20,
-        max: 40,
-        remain: 40 - yeardata?.thirdyear?.sum_15e,
-        already_acquired: yeardata?.thirdyear?.sum_15e,
-      },
-    ],
-  },
-],
+          {
+            name: "MOOCS",
+            max: 40,
+            remain:
+              40 -
+              ((yeardata?.thirdyear?.sum_1a || 0) +
+                (yeardata?.thirdyear?.sum_1b || 0) +
+                (yeardata?.thirdyear?.sum_1c || 0) +
+                (yeardata?.thirdyear?.sum_1d || 0)),
+            already_acquired:
+              (yeardata?.thirdyear?.sum_1a || 0) +
+              (yeardata?.thirdyear?.sum_1b || 0) +
+              (yeardata?.thirdyear?.sum_1c || 0) +
+              (yeardata?.thirdyear?.sum_1d || 0),
+            subpoints: [
+              { name: "10 weeks", point_per_activity: 20 },
+              { name: "8 weeks", point_per_activity: 15 },
+              { name: "4 weeks", point_per_activity: 10 },
+              { name: "2 weeks", point_per_activity: 5 },
+            ],
+          },
+          {
+            name: "Tech Fest",
+            subpoints: [
+              {
+                name: "Organizer",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.thirdyear?.sum_2a,
+                already_acquired: yeardata?.thirdyear?.sum_2a,
+              },
+              {
+                name: "Participant",
+                point_per_activity: 3,
+                max: 6,
+                remain: 6 - yeardata?.thirdyear?.sum_2b,
+                already_acquired: yeardata?.thirdyear?.sum_2b,
+              },
+            ],
+          },
+          {
+            name: "Rural Reporting",
+            point_per_activity: 5,
+            max: 10,
+            remain: 10 - yeardata?.thirdyear?.sum_3,
+            already_acquired: yeardata?.thirdyear?.sum_3,
+          },
+          {
+            name: "Tree Plantation",
+            point_per_activity: 1,
+            max: 10,
+            remain: 10 - yeardata?.thirdyear?.sum_4,
+            already_acquired: yeardata?.thirdyear?.sum_4,
+          },
+          {
+            name: "Relief & Charitable Activities",
+            max: 40,
+            remain:
+              40 - (yeardata?.thirdyear?.sum_5a + yeardata?.thirdyear?.sum_5b),
+            already_acquired:
+              yeardata?.thirdyear?.sum_5a + yeardata?.thirdyear?.sum_5b,
+            subpoints: [
+              {
+                name: "Collection of Fund",
+                point_per_activity: 5,
+              },
+              {
+                name: "Relief Work Team",
+                point_per_activity: 20,
+              },
+            ],
+          },
+          {
+            name: "Participation in Debate",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.thirdyear?.sum_6,
+            already_acquired: yeardata?.thirdyear?.sum_6,
+          },
+          {
+            name: "Publication",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.thirdyear?.sum_7,
+            already_acquired: yeardata?.thirdyear?.sum_7,
+          },
+          {
+            name: "Research Publication",
+            point_per_activity: 15,
+            max: 30,
+            remain: 30 - yeardata?.thirdyear?.sum_8,
+            already_acquired: yeardata?.thirdyear?.sum_8,
+          },
+          {
+            name: "Innovation Project",
+            point_per_activity: 30,
+            max: 60,
+            remain: 60 - yeardata?.thirdyear?.sum_9,
+            already_acquired: yeardata?.thirdyear?.sum_9,
+          },
+          {
+            name: "Blood Donation",
+            subpoints: [
+              {
+                name: "Donate Blood",
+                point_per_activity: 8,
+                max: 16,
+                remain: 16 - yeardata?.thirdyear?.sum_10a,
+                already_acquired: yeardata?.thirdyear?.sum_10a,
+              },
+              {
+                name: "Organize Blood Donation Camp",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_10b,
+                already_acquired: yeardata?.thirdyear?.sum_10b,
+              },
+            ],
+          },
+          {
+            name: "Sports",
+            subpoints: [
+              {
+                name: "Personal",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_11a,
+                already_acquired: yeardata?.thirdyear?.sum_11a,
+              },
+              {
+                name: "College",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.thirdyear?.sum_11b,
+                already_acquired: yeardata?.thirdyear?.sum_11b,
+              },
+              {
+                name: "University",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_11c,
+                already_acquired: yeardata?.thirdyear?.sum_11c,
+              },
+              {
+                name: "District",
+                point_per_activity: 12,
+                max: 24,
+                remain: 24 - yeardata?.thirdyear?.sum_11d,
+                already_acquired: yeardata?.thirdyear?.sum_11d,
+              },
+              {
+                name: "Other",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_11e,
+                already_acquired: yeardata?.thirdyear?.sum_11e,
+              },
+              {
+                name: "National",
+                point_per_activity: 20,
+                max: 40,
+                remain: 40 - yeardata?.thirdyear?.sum_11f,
+                already_acquired: yeardata?.thirdyear?.sum_11f,
+              },
+            ],
+          },
+          {
+            name: "Activities in a Professional Society/Student Chapter",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.thirdyear?.sum_12,
+            already_acquired: yeardata?.thirdyear?.sum_12,
+          },
+          {
+            name: "Relevant Industry Visit & Report",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.thirdyear?.sum_13,
+            already_acquired: yeardata?.thirdyear?.sum_13,
+          },
+          {
+            name: "Community Service & Allied Activities",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.thirdyear?.sum_14,
+            already_acquired: yeardata?.thirdyear?.sum_14,
+          },
+          {
+            name: "Self-Entrepreneurship",
+            subpoints: [
+              {
+                name: "Organise Entrepreneurship Programmes",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_15a,
+                already_acquired: yeardata?.thirdyear?.sum_15a,
+              },
+              {
+                name: "Take Part in Entrepreneurship",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.thirdyear?.sum_15b,
+                already_acquired: yeardata?.thirdyear?.sum_15b,
+              },
+              {
+                name: "Film Making",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_15c,
+                already_acquired: yeardata?.thirdyear?.sum_15c,
+              },
+              {
+                name: "Submit Business Plan",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.thirdyear?.sum_15d,
+                already_acquired: yeardata?.thirdyear?.sum_15d,
+              },
+              {
+                name: "Work for Start-up",
+                point_per_activity: 20,
+                max: 40,
+                remain: 40 - yeardata?.thirdyear?.sum_15e,
+                already_acquired: yeardata?.thirdyear?.sum_15e,
+              },
+            ],
+          },
+        ],
         fourthyear: [
-  {
-    name: "MOOCS",
-    max: 40,
-    remain:
-      40 -
-      ((yeardata?.fourthyear?.sum_1a || 0) +
-        (yeardata?.fourthyear?.sum_1b || 0) +
-        (yeardata?.fourthyear?.sum_1c || 0) +
-        (yeardata?.fourthyear?.sum_1d || 0)),
-    already_acquired:
-      (yeardata?.fourthyear?.sum_1a || 0) +
-      (yeardata?.fourthyear?.sum_1b || 0) +
-      (yeardata?.fourthyear?.sum_1c || 0) +
-      (yeardata?.fourthyear?.sum_1d || 0),
-    subpoints: [
-      { name: "10 weeks", point_per_activity: 20 },
-      { name: "8 weeks", point_per_activity: 15 },
-      { name: "4 weeks", point_per_activity: 10 },
-      { name: "2 weeks", point_per_activity: 5 },
-    ],
-  },
-  {
-    name: "Tech Fest",
-    subpoints: [
-      {
-        name: "Organizer",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.fourthyear?.sum_2a,
-        already_acquired: yeardata?.fourthyear?.sum_2a,
-      },
-      {
-        name: "Participant",
-        point_per_activity: 3,
-        max: 6,
-        remain: 6 - yeardata?.fourthyear?.sum_2b,
-        already_acquired: yeardata?.fourthyear?.sum_2b,
-      },
-    ],
-  },
-  {
-    name: "Rural Reporting",
-    point_per_activity: 5,
-    max: 10,
-    remain: 10 - yeardata?.fourthyear?.sum_3,
-    already_acquired: yeardata?.fourthyear?.sum_3,
-  },
-  {
-    name: "Tree Plantation",
-    point_per_activity: 1,
-    max: 10,
-    remain: 10 - yeardata?.fourthyear?.sum_4,
-    already_acquired: yeardata?.fourthyear?.sum_4,
-  },
-  {
-    name: "Relief & Charitable Activities",
-    max: 40,
-    remain: 40 - (yeardata?.fourthyear?.sum_5a + yeardata?.fourthyear?.sum_5b),
-    already_acquired:
-      yeardata?.fourthyear?.sum_5a + yeardata?.fourthyear?.sum_5b,
-    subpoints: [
-      {
-        name: "Collection of Fund",
-        point_per_activity: 5,
-      },
-      {
-        name: "Relief Work Team",
-        point_per_activity: 20,
-      },
-    ],
-  },
-  {
-    name: "Participation in Debate",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.fourthyear?.sum_6,
-    already_acquired: yeardata?.fourthyear?.sum_6,
-  },
-  {
-    name: "Publication",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.fourthyear?.sum_7,
-    already_acquired: yeardata?.fourthyear?.sum_7,
-  },
-  {
-    name: "Research Publication",
-    point_per_activity: 15,
-    max: 30,
-    remain: 30 - yeardata?.fourthyear?.sum_8,
-    already_acquired: yeardata?.fourthyear?.sum_8,
-  },
-  {
-    name: "Innovation Project",
-    point_per_activity: 30,
-    max: 60,
-    remain: 60 - yeardata?.fourthyear?.sum_9,
-    already_acquired: yeardata?.fourthyear?.sum_9,
-  },
-  {
-    name: "Blood Donation",
-    subpoints: [
-      {
-        name: "Donate Blood",
-        point_per_activity: 8,
-        max: 16,
-        remain: 16 - yeardata?.fourthyear?.sum_10a,
-        already_acquired: yeardata?.fourthyear?.sum_10a,
-      },
-      {
-        name: "Organize Blood Donation Camp",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_10b,
-        already_acquired: yeardata?.fourthyear?.sum_10b,
-      },
-    ],
-  },
-  {
-    name: "Sports",
-    subpoints: [
-      {
-        name: "Personal",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_11a,
-        already_acquired: yeardata?.fourthyear?.sum_11a,
-      },
-      {
-        name: "College",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.fourthyear?.sum_11b,
-        already_acquired: yeardata?.fourthyear?.sum_11b,
-      },
-      {
-        name: "University",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_11c,
-        already_acquired: yeardata?.fourthyear?.sum_11c,
-      },
-      {
-        name: "District",
-        point_per_activity: 12,
-        max: 24,
-        remain: 24 - yeardata?.fourthyear?.sum_11d,
-        already_acquired: yeardata?.fourthyear?.sum_11d,
-      },
-      {
-        name: "Other",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_11e,
-        already_acquired: yeardata?.fourthyear?.sum_11e,
-      },
-      {
-        name: "National",
-        point_per_activity: 20,
-        max: 40,
-        remain: 40 - yeardata?.fourthyear?.sum_11f,
-        already_acquired: yeardata?.fourthyear?.sum_11f,
-      },
-    ],
-  },
-  {
-    name: "Activities in a Professional Society/Student Chapter",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.fourthyear?.sum_12,
-    already_acquired: yeardata?.fourthyear?.sum_12,
-  },
-  {
-    name: "Relevant Industry Visit & Report",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.fourthyear?.sum_13,
-    already_acquired: yeardata?.fourthyear?.sum_13,
-  },
-  {
-    name: "Community Service & Allied Activities",
-    point_per_activity: 10,
-    max: 20,
-    remain: 20 - yeardata?.fourthyear?.sum_14,
-    already_acquired: yeardata?.fourthyear?.sum_14,
-  },
-  {
-    name: "Self-Entrepreneurship",
-    subpoints: [
-      {
-        name: "Organise Entrepreneurship Programmes",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_15a,
-        already_acquired: yeardata?.fourthyear?.sum_15a,
-      },
-      {
-        name: "Take Part in Entrepreneurship",
-        point_per_activity: 5,
-        max: 10,
-        remain: 10 - yeardata?.fourthyear?.sum_15b,
-        already_acquired: yeardata?.fourthyear?.sum_15b,
-      },
-      {
-        name: "Film Making",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_15c,
-        already_acquired: yeardata?.fourthyear?.sum_15c,
-      },
-      {
-        name: "Submit Business Plan",
-        point_per_activity: 10,
-        max: 20,
-        remain: 20 - yeardata?.fourthyear?.sum_15d,
-        already_acquired: yeardata?.fourthyear?.sum_15d,
-      },
-      {
-        name: "Work for Start-up",
-        point_per_activity: 20,
-        max: 40,
-        remain: 40 - yeardata?.fourthyear?.sum_15e,
-        already_acquired: yeardata?.fourthyear?.sum_15e,
-      },
-    ],
-  },
-],
-        
+          {
+            name: "MOOCS",
+            max: 40,
+            remain:
+              40 -
+              ((yeardata?.fourthyear?.sum_1a || 0) +
+                (yeardata?.fourthyear?.sum_1b || 0) +
+                (yeardata?.fourthyear?.sum_1c || 0) +
+                (yeardata?.fourthyear?.sum_1d || 0)),
+            already_acquired:
+              (yeardata?.fourthyear?.sum_1a || 0) +
+              (yeardata?.fourthyear?.sum_1b || 0) +
+              (yeardata?.fourthyear?.sum_1c || 0) +
+              (yeardata?.fourthyear?.sum_1d || 0),
+            subpoints: [
+              { name: "10 weeks", point_per_activity: 20 },
+              { name: "8 weeks", point_per_activity: 15 },
+              { name: "4 weeks", point_per_activity: 10 },
+              { name: "2 weeks", point_per_activity: 5 },
+            ],
+          },
+          {
+            name: "Tech Fest",
+            subpoints: [
+              {
+                name: "Organizer",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.fourthyear?.sum_2a,
+                already_acquired: yeardata?.fourthyear?.sum_2a,
+              },
+              {
+                name: "Participant",
+                point_per_activity: 3,
+                max: 6,
+                remain: 6 - yeardata?.fourthyear?.sum_2b,
+                already_acquired: yeardata?.fourthyear?.sum_2b,
+              },
+            ],
+          },
+          {
+            name: "Rural Reporting",
+            point_per_activity: 5,
+            max: 10,
+            remain: 10 - yeardata?.fourthyear?.sum_3,
+            already_acquired: yeardata?.fourthyear?.sum_3,
+          },
+          {
+            name: "Tree Plantation",
+            point_per_activity: 1,
+            max: 10,
+            remain: 10 - yeardata?.fourthyear?.sum_4,
+            already_acquired: yeardata?.fourthyear?.sum_4,
+          },
+          {
+            name: "Relief & Charitable Activities",
+            max: 40,
+            remain:
+              40 -
+              (yeardata?.fourthyear?.sum_5a + yeardata?.fourthyear?.sum_5b),
+            already_acquired:
+              yeardata?.fourthyear?.sum_5a + yeardata?.fourthyear?.sum_5b,
+            subpoints: [
+              {
+                name: "Collection of Fund",
+                point_per_activity: 5,
+              },
+              {
+                name: "Relief Work Team",
+                point_per_activity: 20,
+              },
+            ],
+          },
+          {
+            name: "Participation in Debate",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.fourthyear?.sum_6,
+            already_acquired: yeardata?.fourthyear?.sum_6,
+          },
+          {
+            name: "Publication",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.fourthyear?.sum_7,
+            already_acquired: yeardata?.fourthyear?.sum_7,
+          },
+          {
+            name: "Research Publication",
+            point_per_activity: 15,
+            max: 30,
+            remain: 30 - yeardata?.fourthyear?.sum_8,
+            already_acquired: yeardata?.fourthyear?.sum_8,
+          },
+          {
+            name: "Innovation Project",
+            point_per_activity: 30,
+            max: 60,
+            remain: 60 - yeardata?.fourthyear?.sum_9,
+            already_acquired: yeardata?.fourthyear?.sum_9,
+          },
+          {
+            name: "Blood Donation",
+            subpoints: [
+              {
+                name: "Donate Blood",
+                point_per_activity: 8,
+                max: 16,
+                remain: 16 - yeardata?.fourthyear?.sum_10a,
+                already_acquired: yeardata?.fourthyear?.sum_10a,
+              },
+              {
+                name: "Organize Blood Donation Camp",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_10b,
+                already_acquired: yeardata?.fourthyear?.sum_10b,
+              },
+            ],
+          },
+          {
+            name: "Sports",
+            subpoints: [
+              {
+                name: "Personal",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_11a,
+                already_acquired: yeardata?.fourthyear?.sum_11a,
+              },
+              {
+                name: "College",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.fourthyear?.sum_11b,
+                already_acquired: yeardata?.fourthyear?.sum_11b,
+              },
+              {
+                name: "University",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_11c,
+                already_acquired: yeardata?.fourthyear?.sum_11c,
+              },
+              {
+                name: "District",
+                point_per_activity: 12,
+                max: 24,
+                remain: 24 - yeardata?.fourthyear?.sum_11d,
+                already_acquired: yeardata?.fourthyear?.sum_11d,
+              },
+              {
+                name: "Other",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_11e,
+                already_acquired: yeardata?.fourthyear?.sum_11e,
+              },
+              {
+                name: "National",
+                point_per_activity: 20,
+                max: 40,
+                remain: 40 - yeardata?.fourthyear?.sum_11f,
+                already_acquired: yeardata?.fourthyear?.sum_11f,
+              },
+            ],
+          },
+          {
+            name: "Activities in a Professional Society/Student Chapter",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.fourthyear?.sum_12,
+            already_acquired: yeardata?.fourthyear?.sum_12,
+          },
+          {
+            name: "Relevant Industry Visit & Report",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.fourthyear?.sum_13,
+            already_acquired: yeardata?.fourthyear?.sum_13,
+          },
+          {
+            name: "Community Service & Allied Activities",
+            point_per_activity: 10,
+            max: 20,
+            remain: 20 - yeardata?.fourthyear?.sum_14,
+            already_acquired: yeardata?.fourthyear?.sum_14,
+          },
+          {
+            name: "Self-Entrepreneurship",
+            subpoints: [
+              {
+                name: "Organise Entrepreneurship Programmes",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_15a,
+                already_acquired: yeardata?.fourthyear?.sum_15a,
+              },
+              {
+                name: "Take Part in Entrepreneurship",
+                point_per_activity: 5,
+                max: 10,
+                remain: 10 - yeardata?.fourthyear?.sum_15b,
+                already_acquired: yeardata?.fourthyear?.sum_15b,
+              },
+              {
+                name: "Film Making",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_15c,
+                already_acquired: yeardata?.fourthyear?.sum_15c,
+              },
+              {
+                name: "Submit Business Plan",
+                point_per_activity: 10,
+                max: 20,
+                remain: 20 - yeardata?.fourthyear?.sum_15d,
+                already_acquired: yeardata?.fourthyear?.sum_15d,
+              },
+              {
+                name: "Work for Start-up",
+                point_per_activity: 20,
+                max: 40,
+                remain: 40 - yeardata?.fourthyear?.sum_15e,
+                already_acquired: yeardata?.fourthyear?.sum_15e,
+              },
+            ],
+          },
+        ],
       };
     }
 
@@ -2424,8 +2428,8 @@ export const activitySubmitByStudent = async (req, res) => {
         typeof initialStudentActivityFormData[key] === "object"
       ) {
         const activity = initialStudentActivityFormData[key];
-        const fileKey = `${key}File`; 
-         const documentUrl =formData[fileKey] || null;
+        const fileKey = `${key}File`;
+        const documentUrl = formData[fileKey] || null;
         matchedFields.push({
           key,
           value: numericValue,
@@ -2446,7 +2450,7 @@ export const activitySubmitByStudent = async (req, res) => {
             numericValue,
             true, // is_active
             false, // is_verified
-            documentUrl
+            documentUrl,
           ]
         );
       }
@@ -2462,7 +2466,6 @@ export const activitySubmitByStudent = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 export const getYearlyStudentDetails = async (req, res) => {
   try {
@@ -2521,12 +2524,13 @@ export const getYearlyStudentDetails = async (req, res) => {
         const activities = activitiesRes.rows || [];
 
         const hasSubmitted = activities.length > 0;
-        const isFullyVerified = hasSubmitted && activities.every((act) => act.is_verified === true);
+        const isFullyVerified =
+          hasSubmitted && activities.every((act) => act.is_verified === true);
 
         const studentData = {
           ...student,
           activities,
-          ...(isFullyVerified ? { status: true } : {status: false}), // add status: true if fully verified
+          ...(isFullyVerified ? { status: true } : { status: false }), // add status: true if fully verified
         };
 
         // Store the student in the year group
@@ -2544,9 +2548,11 @@ export const getYearlyStudentDetails = async (req, res) => {
     for (const yearLabel of yearMap) {
       const yearStats = tempStats[yearLabel];
       const totalStudents = yearStats.length;
-      const totalSubmitted = yearStats.filter(s => s.hasSubmitted).length;
+      const totalSubmitted = yearStats.filter((s) => s.hasSubmitted).length;
       const totalNotSubmitted = totalStudents - totalSubmitted;
-      const totalFullyVerified = yearStats.filter(s => s.isFullyVerified).length;
+      const totalFullyVerified = yearStats.filter(
+        (s) => s.isFullyVerified
+      ).length;
       const totalNotVerified = totalSubmitted - totalFullyVerified;
 
       result[yearLabel].stats = {
@@ -2565,43 +2571,42 @@ export const getYearlyStudentDetails = async (req, res) => {
   }
 };
 
-
 export const deleteStudentDetails = async (req, res) => {
   try {
-  const { id } = req.body;
+    const { id } = req.body;
 
-  if (!id) {
-    return res.status(400).json({ message: "Missing student activity ID in payload." });
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Missing student activity ID in payload." });
+    }
+
+    // Step 1: Get current is_active value
+    const { rows } = await pool.query(
+      `SELECT is_active FROM student_activities WHERE id = $1`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Student activity not found." });
+    }
+
+    const currentStatus = rows[0].is_active;
+
+    // Step 2: Toggle the status
+    const updatedRes = await pool.query(
+      `UPDATE student_activities SET is_active = $1 WHERE id = $2 RETURNING *`,
+      [!currentStatus, id]
+    );
+
+    return res.status(200).json({
+      message: `Student activity status updated to ${!currentStatus}`,
+      data: updatedRes.rows[0],
+    });
+  } catch (error) {
+    console.error("Error toggling student activity status:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-
-  // Step 1: Get current is_active value
-  const { rows } = await pool.query(
-    `SELECT is_active FROM student_activities WHERE id = $1`,
-    [id]
-  );
-
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "Student activity not found." });
-  }
-
-  const currentStatus = rows[0].is_active;
-
-  // Step 2: Toggle the status
-  const updatedRes = await pool.query(
-    `UPDATE student_activities SET is_active = $1 WHERE id = $2 RETURNING *`,
-    [!currentStatus, id]
-  );
-
-  return res.status(200).json({
-    message: `Student activity status updated to ${!currentStatus}`,
-    data: updatedRes.rows[0],
-  });
-
-} catch (error) {
-  console.error("Error toggling student activity status:", error);
-  res.status(500).json({ message: "Internal server error" });
-}
-
 };
 
 export const verifyStudentDetails = async (req, res) => {
@@ -2626,7 +2631,6 @@ export const verifyStudentDetails = async (req, res) => {
     res.status(200).json({
       message: "Selected Activities Verified Successfully!",
     });
-
   } catch (error) {
     console.error("Error verifying student activities:", error.message);
     res.status(500).json({ message: "Internal server error" });
@@ -2639,14 +2643,16 @@ export const uploadStudentSignature = async (req, res) => {
     const signatureFile = req.file;
 
     if (!signatureFile?.location) {
-      return res.status(400).json({ success: false, message: "No file uploaded" });
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
     }
 
     // Update signature URL in DB
-    await pool.query(
-      "UPDATE students SET signature = $1 WHERE id = $2",
-      [signatureFile.location, studentId]
-    );
+    await pool.query("UPDATE students SET signature = $1 WHERE id = $2", [
+      signatureFile.location,
+      studentId,
+    ]);
 
     res.status(200).json({
       success: true,
@@ -2659,8 +2665,8 @@ export const uploadStudentSignature = async (req, res) => {
   }
 };
 
-export const uploadIndividualFile = async(req,res) =>{
- try {
+export const uploadIndividualFile = async (req, res) => {
+  try {
     console.log("Uploaded file info:", req.file); // S3 file details
     console.log("Field Name:", req.body.fieldName); // tells which form field
 
@@ -2671,17 +2677,17 @@ export const uploadIndividualFile = async(req,res) =>{
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-}
-
+};
 
 export const deleteStudentFile = async (req, res) => {
   try {
     const { fieldName, fileUrl } = req.body;
-    console.log("file name is delte::",req.body)
-
+    console.log("file name is delte::", req.body);
 
     if (!fileUrl) {
-      return res.status(400).json({ success: false, message: "File URL is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "File URL is required" });
     }
 
     // Call the utility function

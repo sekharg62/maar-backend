@@ -4,13 +4,12 @@ import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
 import verifyToken from "../middlewares/verifyToken.js"; // Add `.js` extension
 import sendResponse from "../utils/sendResponse.js";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import { createPaytmPayment } from "../services/createPaymentPayment.js";
 dotenv.config();
 const router = express.Router();
 
 export const registerSuperadmin = async (req, res) => {
-
   const { name, email, password, college_name, college_code } = req.body;
 
   const client = await pool.connect();
@@ -18,43 +17,43 @@ export const registerSuperadmin = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-   const existingEmail = await client.query(
-    "SELECT 1 FROM superadmins WHERE email = $1",
-    [email]
-  );
+    const existingEmail = await client.query(
+      "SELECT 1 FROM superadmins WHERE email = $1",
+      [email]
+    );
 
-  if (existingEmail.rows.length > 0) {
-    return sendResponse(res, {
-      status: 0,
-      message: "Email already exists",
-      httpCode: 400,
-    });
-  }
-
-   const existingInstitute = await client.query(
-    "SELECT * FROM institutes WHERE name = $1 OR institute_code = $2",
-    [college_name, college_code]
-  );
-
-  if (existingInstitute.rows.length > 0) {
-    const existing = existingInstitute.rows[0];
-
-    if (existing.name === college_name) {
+    if (existingEmail.rows.length > 0) {
       return sendResponse(res, {
         status: 0,
-        message: "Institute name already exists",
+        message: "Email already exists",
         httpCode: 400,
       });
     }
 
-    if (existing.institute_code === college_code) {
-      return sendResponse(res, {
-        status: 0,
-        message: "Institute code already exists",
-        httpCode: 400,
-      });
+    const existingInstitute = await client.query(
+      "SELECT * FROM institutes WHERE name = $1 OR institute_code = $2",
+      [college_name, college_code]
+    );
+
+    if (existingInstitute.rows.length > 0) {
+      const existing = existingInstitute.rows[0];
+
+      if (existing.name === college_name) {
+        return sendResponse(res, {
+          status: 0,
+          message: "Institute name already exists",
+          httpCode: 400,
+        });
+      }
+
+      if (existing.institute_code === college_code) {
+        return sendResponse(res, {
+          status: 0,
+          message: "Institute code already exists",
+          httpCode: 400,
+        });
+      }
     }
-  }
     await client.query("BEGIN");
 
     // Insert superadmin and institute
@@ -93,7 +92,6 @@ export const registerSuperadmin = async (req, res) => {
       status: 201,
       message: "Registration successful. You may now log in.",
       data: institute,
-     
     });
   } catch (err) {
     await client.query("ROLLBACK");
@@ -108,10 +106,9 @@ export const registerSuperadmin = async (req, res) => {
   }
 };
 
-
 export const loginSuperadmin = async (req, res) => {
   const { email, password } = req.body;
-//console.log("login",req.body)
+  //console.log("login",req.body)
   try {
     const result = await pool.query(
       "SELECT * FROM superadmins WHERE email = $1",
@@ -122,7 +119,10 @@ export const loginSuperadmin = async (req, res) => {
       return res.status(400).json({ message: "Invalid email" });
     }
 
-    const valid = await bcrypt.compare(password, result.rows[0].hashed_password);
+    const valid = await bcrypt.compare(
+      password,
+      result.rows[0].hashed_password
+    );
     if (!valid) {
       return res.status(401).json({ message: "Invalid password" });
     }
@@ -133,30 +133,42 @@ export const loginSuperadmin = async (req, res) => {
 
     return sendResponse(res, {
       status: 200,
-      message: "Login successful",
-      data: { token },
+      role: "superadmin",
+      message: "Login successfully",
+      data: { token, role: "superadmin" },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
 export const getSuperadminDetails = async (req, res) => {
   const superadminId = req.user.id; // Extracted from token
 
   try {
     // 1. Get superadmin details
-    const superadmin = await pool.query("SELECT * FROM superadmins WHERE id = $1", [superadminId]);
+    const superadmin = await pool.query(
+      "SELECT * FROM superadmins WHERE id = $1",
+      [superadminId]
+    );
 
     // 2. Get associated institute(s)
-    const institute = await pool.query("SELECT * FROM institutes WHERE superadmin_id = $1", [superadminId]);
+    const institute = await pool.query(
+      "SELECT * FROM institutes WHERE superadmin_id = $1",
+      [superadminId]
+    );
 
     // 3. Get payment details
-    const payment = await pool.query("SELECT * FROM payments WHERE institute_id = $1", [institute.rows[0]?.id]);
+    const payment = await pool.query(
+      "SELECT * FROM payments WHERE institute_id = $1",
+      [institute.rows[0]?.id]
+    );
 
     // 4. Get all teachers under this institute
-    const teachers = await pool.query("SELECT * FROM teachers WHERE superadmin_id = $1", [superadminId]);
+    const teachers = await pool.query(
+      "SELECT * FROM teachers WHERE superadmin_id = $1",
+      [superadminId]
+    );
 
     return sendResponse(res, {
       status: 1,
@@ -165,7 +177,7 @@ export const getSuperadminDetails = async (req, res) => {
         superadmin: superadmin.rows[0],
         institute: institute.rows[0],
         payment: payment.rows[0],
-       teachers: teachers.rows,
+        teachers: teachers.rows,
       },
     });
   } catch (err) {
@@ -180,20 +192,21 @@ export const getSuperadminDetails = async (req, res) => {
 
 export const getPlanDetails = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM PaymentPlans ORDER BY id ASC");
+    const result = await pool.query(
+      "SELECT * FROM PaymentPlans ORDER BY id ASC"
+    );
     res.status(200).json({
       success: true,
-      data: result.rows
+      data: result.rows,
     });
   } catch (error) {
     console.error("Error fetching plan details:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch plan details"
+      message: "Failed to fetch plan details",
     });
   }
 };
-
 
 export const createPaymentBySuperadmin = async (req, res) => {
   try {
@@ -201,36 +214,33 @@ export const createPaymentBySuperadmin = async (req, res) => {
     const { amount } = req.body;
 
     if (!superadminId || !amount) {
-      return res.status(400).json({ message: "Missing superadmin ID or amount" });
+      return res
+        .status(400)
+        .json({ message: "Missing superadmin ID or amount" });
     }
 
-    const paymentData = await createPaytmPayment(superadminId,amount);
+    const paymentData = await createPaytmPayment(superadminId, amount);
     return res.json({ payUrl: paymentData.paytmUrl });
-
-    
-
-  
   } catch (error) {
     console.error("Error creating payment:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-
 export const getDepartments = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM departments ORDER BY name ASC');
+    const result = await pool.query(
+      "SELECT * FROM departments ORDER BY name ASC"
+    );
     res.status(200).json({
       success: true,
       data: result.rows,
     });
   } catch (error) {
-    console.error('Error fetching departments:', error);
+    console.error("Error fetching departments:", error);
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching departments',
+      message: "Server error while fetching departments",
     });
   }
 };
-
-
