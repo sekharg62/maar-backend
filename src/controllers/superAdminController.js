@@ -190,24 +190,6 @@ export const getSuperadminDetails = async (req, res) => {
   }
 };
 
-export const getPlanDetails = async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM PaymentPlans ORDER BY id ASC"
-    );
-    res.status(200).json({
-      success: true,
-      data: result.rows,
-    });
-  } catch (error) {
-    console.error("Error fetching plan details:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch plan details",
-    });
-  }
-};
-
 export const createPaymentBySuperadmin = async (req, res) => {
   try {
     const superadminId = req.user.id;
