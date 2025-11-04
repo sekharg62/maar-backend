@@ -54,8 +54,6 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUsers = async (req, res, next) => {
-
-
   try {
     const deleteUser = await deleteUsersService(req.params.id);
     if (!user) handleResponse(res, 404, "User not found");
@@ -64,4 +62,3 @@ export const deleteUsers = async (req, res, next) => {
     next(err);
   }
 };
-

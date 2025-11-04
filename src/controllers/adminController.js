@@ -8,7 +8,9 @@ export const adminLogin = async (req, res) => {
     const { phone, password } = req.body;
 
     if (!phone || !password) {
-      return res.status(400).json({ message: "Phone and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Phone and password are required" });
     }
 
     // Fetch admin from DB
@@ -49,8 +51,6 @@ export const adminLogin = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 export const getSuperadmins = async (req, res) => {
   try {

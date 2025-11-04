@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import multer from "multer";
 import multerS3 from "multer-s3";
 
@@ -21,7 +25,6 @@ export const uploadTeacherSignatureS3 = multer({
     },
   }),
 });
-
 
 export const uploadStudentSignatureS3 = multer({
   storage: multerS3({
@@ -49,9 +52,9 @@ export const uploadStudentActivityS3 = multer({
     bucket: "student-teacher-new",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (req, file, cb) => {
-      const insCode = req.user?.code;   // from token
-      const rollNo = req.user?.rollNo;  // from token
-      console.log("ins codell,,rollno",insCode,rollNo)
+      const insCode = req.user?.code; // from token
+      const rollNo = req.user?.rollNo; // from token
+      console.log("ins codell,,rollno", insCode, rollNo);
 
       if (!insCode || !rollNo) {
         return cb(new Error("Institute code or roll number missing"));
@@ -83,4 +86,3 @@ export const deleteFileFromS3 = async (fileUrl) => {
     throw err;
   }
 };
-

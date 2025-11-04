@@ -7,6 +7,6 @@ const router = express.Router();
 
 // Admin login route
 router.post("/login", adminLogin);
-router.get("/getSuperAdmins",verifyToken,getSuperadmins)
+router.get("/getSuperAdmins", verifyToken, getSuperadmins);
 
 export default router;

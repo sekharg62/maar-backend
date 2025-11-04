@@ -17,14 +17,23 @@ import {
   verifyStudentDetails,
 } from "../controllers/studentController.js";
 import verifyToken from "../middlewares/verifyToken.js";
-import { deleteFileFromS3, uploadStudentActivityS3, uploadStudentSignatureS3 } from "../config/s3.js";
+import {
+  deleteFileFromS3,
+  uploadStudentActivityS3,
+  uploadStudentSignatureS3,
+} from "../config/s3.js";
 
 const router = express.Router();
 
 const upload = multer({ dest: "uploads/" });
 //perform by teacher
 
-router.post("/createByExcel",verifyToken, upload.single("file"),createStudentByExcel);
+router.post(
+  "/createByExcel",
+  verifyToken,
+  upload.single("file"),
+  createStudentByExcel
+);
 router.post("/createIndividual", verifyToken, createStudentIndividual);
 router.get("/getAllStudents", verifyToken, getAllStudent);
 router.get("/getYearlyDetails", verifyToken, getYearlyStudentDetails);
@@ -47,8 +56,13 @@ router.post(
 );
 
 // Student Activity
-router.post("/individualFile",verifyToken,uploadStudentActivityS3.single("file"),uploadIndividualFile);
-router.post("/deleteFile", verifyToken,deleteStudentFile);
+router.post(
+  "/individualFile",
+  verifyToken,
+  uploadStudentActivityS3.single("file"),
+  uploadIndividualFile
+);
+router.post("/deleteFile", verifyToken, deleteStudentFile);
 
 router.post("/activitySubmit", verifyToken, activitySubmitByStudent);
 

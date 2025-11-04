@@ -1,16 +1,16 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import pool from './config/db.js';
-import superadminRoutes from './routes/superAdminRoutes.js';
-import teacherRoutes from './routes/teacherRoute.js';
-import studentRoutes from './routes/studentRoute.js';
-import adminRoute from './routes/adminRoute.js';
-import userRoutes from "./routes/userRoute.js"
-import { swaggerUi, specs } from '../swagger.js';
-import errorHandling from './middlewares/errorHandler.js';
-import createUserTable from './data/createUserTable.js';
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import pool from "./config/db.js";
+import superadminRoutes from "./routes/superAdminRoutes.js";
+import teacherRoutes from "./routes/teacherRoute.js";
+import studentRoutes from "./routes/studentRoute.js";
+import adminRoute from "./routes/adminRoute.js";
+import userRoutes from "./routes/userRoute.js";
+import { swaggerUi, specs } from "../swagger.js";
+import errorHandling from "./middlewares/errorHandler.js";
+import createUserTable from "./data/createUserTable.js";
 
 dotenv.config();
 
@@ -21,19 +21,15 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 
-
-
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 //app.use(bodyParser.json());
-
 
 ///----Routes
 //app.use("/api/v1",userRoutes)
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-
 
 app.get("/api/public/test", (req, res) => {
   res.json({
@@ -47,11 +43,10 @@ app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoute);
 /// ----Error Handling middleware
-app.use(errorHandling)
-
+app.use(errorHandling);
 
 ///Create table before starting the server
-createUserTable()
+createUserTable();
 /* app.post("/submit-form", async (req, res) => {
   const { roll, password } = req.body;
 
@@ -85,14 +80,13 @@ await page.click('a[onclick="openLoginPage(\'4\');"]');
   // await browser.close();
 }); */
 
-
-console.log("index")
+console.log("index");
 //-------Testing POSTGRES Connect.get
 app.get("/test", async (req, res) => {
   try {
     const result = await pool.query("SELECT current_database()");
     //console.log("Query result:", result.rows); // debug log
-    console.log("resule:",result)
+    console.log("resule:", result);
 
     res.send(`The database name is: ${result.rows[0].current_database}`);
   } catch (error) {
@@ -100,8 +94,6 @@ app.get("/test", async (req, res) => {
     res.status(500).send("Error fetching database name");
   }
 });
-
-
 
 //----- Server Running
 app.listen(port, () => {

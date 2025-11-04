@@ -4,5 +4,5 @@ const upload = multer({ storage: multer.memoryStorage() }); // store in memory o
 
 export const uploadFields = upload.fields([
   { name: "excel", maxCount: 1 },
-  { name: "signature", maxCount: 1 }
+  { name: "signature", maxCount: 1 },
 ]);
