@@ -66,7 +66,9 @@ export const getTeacherDetails = async (req, res) => {
 
     // Fetch teacher details
     const teacherResult = await pool.query(
-      `SELECT * FROM teachers WHERE id = $1`,
+      `SELECT id, name, email,mobile_no,signature, department, created_at, updated_at 
+   FROM teachers 
+   WHERE id = $1`,
       [teacherId]
     );
 
