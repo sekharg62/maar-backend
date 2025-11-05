@@ -251,12 +251,12 @@ export const uploadTeacherSignature = async (req, res) => {
 export const createTeacher = async (req, res) => {
   const { teacher_name, department, email, password, mobile_no } = req.body;
   const superadmin_id = req.user.id;
-  console.log("create teacheer", req.body, typeof superadmin_id);
+  // console.log("create teacheer", req.body, typeof superadmin_id);
 
   try {
     const password_hash = await bcrypt.hash(password, 10);
 
-    const result = await pool.query(
+    await pool.query(
       `INSERT INTO teachers (name, email, password_hash, department, superadmin_id,mobile_no)
        VALUES ($1, $2, $3, $4, $5,$6)
        RETURNING *`,
@@ -266,7 +266,6 @@ export const createTeacher = async (req, res) => {
     res.status(201).json({
       status: 1,
       message: "Teacher created successfully",
-      data: result.rows[0],
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
