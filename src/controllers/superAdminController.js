@@ -166,7 +166,9 @@ export const getSuperadminDetails = async (req, res) => {
 
     // 4. Get all teachers under this institute
     const teachers = await pool.query(
-      "SELECT * FROM teachers WHERE superadmin_id = $1",
+      `SELECT id, name, email, mobile_no, signature, department, created_at, updated_at
+   FROM teachers
+   WHERE superadmin_id = $1`,
       [superadminId]
     );
 

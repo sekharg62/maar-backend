@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  console.log("token is::::", token);
+  //console.log("token is::::", token);
 
   if (!token) {
     return res.status(401).json({ message: "Access token required" });

@@ -1,10 +1,9 @@
 // routes/teacherRoutes.js
 import express from "express";
-import multer from "multer";
 import {
   activitySubmitByStudent,
-  createStudentByExcel,
   createStudentIndividual,
+  createStudentsBulk,
   deleteStudentDetails,
   deleteStudentFile,
   getActivityDetails,
@@ -18,23 +17,14 @@ import {
 } from "../controllers/studentController.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import {
-  deleteFileFromS3,
   uploadStudentActivityS3,
   uploadStudentSignatureS3,
 } from "../config/s3.js";
 
 const router = express.Router();
 
-const upload = multer({ dest: "uploads/" });
-//perform by teacher
-
-router.post(
-  "/createByExcel",
-  verifyToken,
-  upload.single("file"),
-  createStudentByExcel
-);
-router.post("/createIndividual", verifyToken, createStudentIndividual);
+router.post("/create", verifyToken, createStudentIndividual);
+router.post("/create/many", verifyToken, createStudentsBulk);
 router.get("/getAllStudents", verifyToken, getAllStudent);
 router.get("/getYearlyDetails", verifyToken, getYearlyStudentDetails);
 router.post("/detailsVerified", verifyToken, verifyStudentDetails);

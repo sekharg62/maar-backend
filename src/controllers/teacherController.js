@@ -58,7 +58,7 @@ export const loginTeacher = async (req, res) => {
 };
 
 export const getTeacherDetails = async (req, res) => {
-  console.log("Techer details");
+  //console.log("Techer details");
 
   try {
     const teacherId = req.user.id;

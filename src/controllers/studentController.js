@@ -6,110 +6,10 @@ import sendResponse from "../utils/sendResponse.js";
 import dotenv from "dotenv";
 dotenv.config();
 import { initialStudentActivityFormData } from "../data/staticData.js";
-import xlsx from "xlsx";
-import fs from "fs";
+
 import dayjs from "dayjs";
 import { deleteFileFromS3 } from "../config/s3.js";
 const router = express.Router();
-
-export const createStudentByExcel = async (req, res) => {
-  try {
-    console.log("Incoming file:", req.file);
-
-    if (!req.file) {
-      return sendResponse(res, {
-        status: 0,
-        message: "No file uploaded.",
-        httpCode: 400,
-      });
-    }
-
-    // Use form-data or hardcoded fallback
-    const year = req.body?.year;
-    const teacherId = req.user?.id;
-
-    console.log("Received year:", year, teacherId);
-
-    if (!year || !teacherId) {
-      return sendResponse(res, {
-        status: 0,
-        message: "Year or Teacher ID missing.",
-        httpCode: 400,
-      });
-    }
-
-    const workbook = xlsx.readFile(req.file.path);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const students = xlsx.utils.sheet_to_json(sheet);
-
-    const insertValues = [];
-
-    for (const student of students) {
-      const { Name, Email, University_Roll_No, Mobile_No } = student;
-      console.log("student::", student);
-
-      if (!Name || !Email || !University_Roll_No || !Mobile_No) continue;
-
-      const hashedPassword = await bcrypt.hash(Mobile_No.toString(), 10);
-
-      insertValues.push([
-        Name, // name
-        University_Roll_No, // roll_no
-        hashedPassword, // password_hash
-        Email, // email
-        year, // admission_year
-        teacherId, // teacher_id
-        new Date(), // created_at
-        Mobile_No, // mobile_no
-      ]);
-    }
-
-    if (insertValues.length > 0) {
-      const columnsPerRow = 8;
-
-      const valuesPlaceholders = insertValues
-        .map((_, i) => {
-          const baseIndex = i * columnsPerRow + 1;
-          const placeholders = Array.from(
-            { length: columnsPerRow },
-            (_, j) => `$${baseIndex + j}`
-          );
-          return `(${placeholders.join(", ")})`;
-        })
-        .join(", ");
-
-      const flatValues = insertValues.flat();
-
-      await pool.query(
-        `INSERT INTO students 
-        (name, roll_no, password_hash, email, admission_year, teacher_id, created_at, mobile_no) 
-        VALUES ${valuesPlaceholders}`,
-        flatValues
-      );
-    }
-
-    fs.unlinkSync(req.file.path); // Clean up temp file
-
-    return sendResponse(res, {
-      message: "Student data imported successfully.",
-      data: {
-        inserted: insertValues.length,
-      },
-    });
-  } catch (error) {
-    console.error("Excel Upload Error:", error);
-
-    if (req.file?.path && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
-    }
-
-    return sendResponse(res, {
-      status: 0,
-      message: "Failed to import student data.",
-      httpCode: 500,
-    });
-  }
-};
 
 export const createStudentIndividual = async (req, res) => {
   try {
@@ -218,6 +118,158 @@ export const createStudentIndividual = async (req, res) => {
     return res.status(500).json({ error: "Internal server error." });
   }
 };
+export const createStudentsBulk = async (req, res) => {
+  console.log("bulk");
+  const client = await pool.connect();
+  try {
+    const teacherId = req.user.id;
+    const students = req.body; // Expect array of { name, email, rollNo, mobileNo, year }
+
+    if (!Array.isArray(students) || students.length === 0) {
+      return res.status(400).json({ error: "Students array is required." });
+    }
+
+    await client.query("BEGIN");
+
+    // 1️⃣ Get teacher -> superadmin -> institute info
+    const teacherResult = await client.query(
+      `SELECT superadmin_id FROM teachers WHERE id = $1`,
+      [teacherId]
+    );
+
+    if (!teacherResult.rows.length) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Teacher not found." });
+    }
+
+    const superadminId = teacherResult.rows[0].superadmin_id;
+
+    const instituteResult = await client.query(
+      `SELECT id FROM institutes WHERE superadmin_id = $1`,
+      [superadminId]
+    );
+
+    if (!instituteResult.rows.length) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Institute not found." });
+    }
+
+    const instituteId = instituteResult.rows[0].id;
+
+    const paymentResult = await client.query(
+      `SELECT id, student_quota, students_registered 
+       FROM payments 
+       WHERE institute_id = $1 
+       ORDER BY paid_on DESC LIMIT 1`,
+      [instituteId]
+    );
+
+    if (!paymentResult.rows.length) {
+      await client.query("ROLLBACK");
+      return res
+        .status(403)
+        .json({ error: "Superadmin hasn't made any payment." });
+    }
+
+    const {
+      id: paymentId,
+      student_quota,
+      students_registered,
+    } = paymentResult.rows[0];
+
+    // Check quota
+    if (students_registered + students.length > student_quota) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({
+        error: `Quota exceeded. You can only add ${
+          student_quota - students_registered
+        } more students.`,
+      });
+    }
+
+    // 2️⃣ Prepare for results
+    const results = [];
+    let successCount = 0;
+
+    // 3️⃣ Loop through students
+    for (let i = 0; i < students.length; i++) {
+      const { name, email, rollNo, mobileNo, year } = students[i];
+      const currentYear = new Date().getFullYear();
+      const admissionYear = currentYear - (parseInt(year) - 1);
+
+      try {
+        // Duplicate check
+        const dupCheck = await client.query(
+          `SELECT id FROM students WHERE email = $1 OR roll_no = $2 OR mobile_no = $3`,
+          [email, rollNo, mobileNo]
+        );
+
+        if (dupCheck.rows.length > 0) {
+          results.push({
+            row: i + 1,
+            status: "failed",
+            message: "Duplicate student (email/roll/mobile already exists)",
+          });
+          continue;
+        }
+
+        const passwordHash = await bcrypt.hash(mobileNo, 10);
+
+        await client.query(
+          `INSERT INTO students 
+            (name, email, mobile_no, password_hash, roll_no, teacher_id, superadmin_id, admission_year, created_at) 
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+          [
+            name,
+            email,
+            mobileNo,
+            passwordHash,
+            rollNo,
+            teacherId,
+            superadminId,
+            admissionYear,
+          ]
+        );
+
+        successCount++;
+        results.push({ row: i + 1, status: "success" });
+      } catch (err) {
+        results.push({
+          row: i + 1,
+          status: "failed",
+          message: err.message,
+        });
+      }
+    }
+
+    // 4️⃣ Update payment record only if some students created
+    if (successCount > 0) {
+      await client.query(
+        `UPDATE payments 
+         SET students_registered = students_registered + $1 
+         WHERE id = $2`,
+        [successCount, paymentId]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    return res.status(201).json({
+      message: "Bulk student creation complete.",
+      total: students.length,
+      success: successCount,
+      failed: students.length - successCount,
+      details: results,
+    });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Bulk student creation error:", error);
+    return res.status(500).json({ error: "Internal server error." });
+  } finally {
+    client.release();
+  }
+};
+
 export const getAllStudent = async (req, res) => {
   try {
     const teacherId = req.user?.id;
