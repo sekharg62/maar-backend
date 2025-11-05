@@ -148,7 +148,7 @@ export const getSuperadminDetails = async (req, res) => {
   try {
     // 1. Get superadmin details
     const superadmin = await pool.query(
-      "SELECT * FROM superadmins WHERE id = $1",
+      "SELECT id, name, email, created_at, updated_at FROM superadmins WHERE id = $1",
       [superadminId]
     );
 

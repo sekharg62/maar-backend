@@ -66,3 +66,18 @@ export const getSuperadmins = async (req, res) => {
     return res.status(500).json({ message: "Database error" });
   }
 };
+
+export const getAllPayment = async (req, res) => {
+  try {
+    // ✅ Fetch superadmins data
+    const result = await pool.query("SELECT * FROM payments");
+
+    return res.status(200).json({
+      message: "Payments fetched successfully",
+      data: result.rows,
+    });
+  } catch (dbError) {
+    console.error("DB Error:", dbError);
+    return res.status(500).json({ message: "Database error" });
+  }
+};

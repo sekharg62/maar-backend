@@ -2,19 +2,12 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
-import verifyToken from "../middlewares/verifyToken.js"; // Add `.js` extension
 import sendResponse from "../utils/sendResponse.js";
 import dotenv from "dotenv";
 dotenv.config();
-import {
-  initialStudentActivityFormData,
-  serialMap,
-  firstyear,
-  generateYearlyMaxObject,
-} from "../data/staticData.js";
+import { initialStudentActivityFormData } from "../data/staticData.js";
 import xlsx from "xlsx";
 import fs from "fs";
-import path from "path";
 import dayjs from "dayjs";
 import { deleteFileFromS3 } from "../config/s3.js";
 const router = express.Router();

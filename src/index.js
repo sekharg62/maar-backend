@@ -24,11 +24,6 @@ app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-//app.use(bodyParser.json());
-
-///----Routes
-//app.use("/api/v1",userRoutes)
-
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get("/api/public/test", (req, res) => {
