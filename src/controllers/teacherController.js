@@ -348,10 +348,6 @@ export const deleteTeacher = async (req, res) => {
   const superadmin_id = req.user.id;
 
   try {
-    console.log(
-      `Attempting to delete teacher with ID: ${teacherId} by superadmin: ${superadmin_id}`
-    );
-
     const result = await pool.query(
       `DELETE FROM teachers 
        WHERE id = $1 AND superadmin_id = $2 
@@ -368,7 +364,6 @@ export const deleteTeacher = async (req, res) => {
     res.status(200).json({
       status: 1,
       message: "Teacher deleted successfully",
-      deletedTeacher: result.rows[0],
     });
   } catch (err) {
     console.error("Error deleting teacher:", err.message);
