@@ -12,6 +12,7 @@ import signatureRoutes from "./routes/signatureRoutes.js";
 import { swaggerUi, specs } from "../swagger.js";
 import errorHandling from "./middlewares/errorHandler.js";
 import createUserTable from "./data/createUserTable.js";
+import verifyToken from "./middlewares/verifyToken.js";
 
 dotenv.config();
 
@@ -39,8 +40,8 @@ app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoute);
 
-app.use("/upload", uploadRoutes);
-app.use("/signature", signatureRoutes);
+app.use("api/upload", verifyToken, uploadRoutes);
+app.use("api/signature", verifyToken, signatureRoutes);
 /// ----Error Handling middleware
 app.use(errorHandling);
 
