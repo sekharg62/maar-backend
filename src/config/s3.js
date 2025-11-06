@@ -86,3 +86,5 @@ export const deleteFileFromS3 = async (fileUrl) => {
     throw err;
   }
 };
+
+export default s3;

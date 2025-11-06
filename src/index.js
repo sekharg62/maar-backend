@@ -7,7 +7,8 @@ import superadminRoutes from "./routes/superAdminRoutes.js";
 import teacherRoutes from "./routes/teacherRoute.js";
 import studentRoutes from "./routes/studentRoute.js";
 import adminRoute from "./routes/adminRoute.js";
-import userRoutes from "./routes/userRoute.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import signatureRoutes from "./routes/signatureRoutes.js";
 import { swaggerUi, specs } from "../swagger.js";
 import errorHandling from "./middlewares/errorHandler.js";
 import createUserTable from "./data/createUserTable.js";
@@ -37,6 +38,9 @@ app.use("/api/superadmin", superadminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoute);
+
+app.use("/upload", uploadRoutes);
+app.use("/signature", signatureRoutes);
 /// ----Error Handling middleware
 app.use(errorHandling);
 
