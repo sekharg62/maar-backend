@@ -40,8 +40,8 @@ app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoute);
 
-app.use("api/upload", verifyToken, uploadRoutes);
-app.use("api/signature", verifyToken, signatureRoutes);
+app.use("/api/upload", verifyToken, uploadRoutes);
+app.use("/api/signature", verifyToken, signatureRoutes);
 /// ----Error Handling middleware
 app.use(errorHandling);
 
