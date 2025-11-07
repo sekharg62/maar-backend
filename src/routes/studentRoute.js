@@ -38,12 +38,7 @@ router.get("/getDetails", verifyToken, getStudentDetails);
 router.get("/getActivityDetails", verifyToken, getActivityDetails);
 /* router.post("/resetPassword", resetStudentPassword); */
 
-router.post(
-  "/uploadSignature",
-  verifyToken,
-  uploadStudentSignatureS3.single("signature"),
-  uploadStudentSignature
-);
+router.post("/upload-signature", verifyToken, uploadStudentSignature);
 
 // Student Activity
 router.post(

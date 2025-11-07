@@ -202,46 +202,19 @@ export const uploadStudentAndSignature = async (req, res) => {
 };
 
 export const uploadTeacherSignature = async (req, res) => {
-  console.log("===== Upload Teacher Signature Request =====");
-  console.log("Headers:", req.headers);
-  console.log("Content-Type:", req.headers["content-type"]);
-  console.log("Teacher ID from token:", req.user?.id || req.userId);
-  console.log(
-    "File received:",
-    req.file
-      ? {
-          fieldname: req.file.fieldname,
-          originalname: req.file.originalname,
-          encoding: req.file.encoding,
-          mimetype: req.file.mimetype,
-          size: req.file.size,
-          location: req.file.location, // S3 file URL
-        }
-      : "❌ No file received"
-  );
-  console.log("Body data:", req.body);
-  console.log("============================================");
-
   try {
-    const teacherId = req.user?.id || req.userId;
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No file uploaded" });
-    }
-
-    const fileUrl = req.file.location; // multer-s3 gives this
+    const teacherId = req.user?.id;
+    const { signature } = req.body;
 
     // Save in DB
     await pool.query("UPDATE teachers SET signature = $1 WHERE id = $2", [
-      fileUrl,
+      signature,
       teacherId,
     ]);
 
-    console.log(
-      `✅ Signature uploaded successfully for teacher ID ${teacherId}`
-    );
-    res.status(200).json({ success: true, url: fileUrl });
+    res
+      .status(200)
+      .json({ success: true, message: "Signature Uploaded Successfully!" });
   } catch (error) {
     console.error("❌ Error uploading signature:", error);
     res

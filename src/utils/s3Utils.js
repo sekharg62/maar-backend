@@ -1,8 +1,7 @@
 import s3 from "../config/s3.js";
+import { CopyObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-/**
- * Copy a file inside the same bucket (used for updating "latest" file)
- */
 export const copyToLatest = async (sourceKey, destKey) => {
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
@@ -10,14 +9,13 @@ export const copyToLatest = async (sourceKey, destKey) => {
     Key: destKey,
     ACL: "private",
   };
-  await s3.copyObject(params).promise();
+  await s3.send(new CopyObjectCommand(params));
 };
+
 export const getSignedFileUrl = async (key) => {
-  const params = {
+  const command = new GetObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
     Key: key,
-    Expires: 60 * 5, // 5 minutes
-  };
-
-  return s3.getSignedUrlPromise("getObject", params);
+  });
+  return getSignedUrl(s3, command, { expiresIn: 60 * 5 }); // 5 minutes
 };

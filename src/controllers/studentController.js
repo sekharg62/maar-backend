@@ -414,7 +414,7 @@ export const getStudentDetails = async (req, res) => {
     }
 
     const result = await pool.query(
-      "SELECT name,roll_no,mobile_no,signature,admission_year,email,superadmin_id FROM students WHERE id = $1",
+      "SELECT id,teacher_id,name,roll_no,mobile_no,signature,admission_year,email,superadmin_id FROM students WHERE id = $1",
       [studentId]
     );
 
@@ -2685,24 +2685,18 @@ export const verifyStudentDetails = async (req, res) => {
 export const uploadStudentSignature = async (req, res) => {
   try {
     const studentId = req.user?.id;
-    const signatureFile = req.file;
-
-    if (!signatureFile?.location) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No file uploaded" });
-    }
+    const signature = req.signature;
+    console.log("id and signatue:,", student);
 
     // Update signature URL in DB
     await pool.query("UPDATE students SET signature = $1 WHERE id = $2", [
-      signatureFile.location,
+      signature,
       studentId,
     ]);
 
     res.status(200).json({
       success: true,
-      message: "Signature uploaded successfully",
-      signatureUrl: signatureFile.location,
+      message: "Signature Uploaded Successfully",
     });
   } catch (err) {
     console.error("Error uploading signature:", err);

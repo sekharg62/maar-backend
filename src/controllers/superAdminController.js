@@ -160,7 +160,7 @@ export const getSuperadminDetails = async (req, res) => {
 
     // 3. Get payment details
     const payment = await pool.query(
-      "SELECT * FROM payments WHERE institute_id = $1",
+      "SELECT id,amount_paid,student_quota,students_registered,paid_on,valid_until,created_at,updated_at,is_approve,schreenshot_url FROM payments WHERE institute_id = $1",
       [institute.rows[0]?.id]
     );
 
@@ -178,7 +178,7 @@ export const getSuperadminDetails = async (req, res) => {
       data: {
         superadmin: superadmin.rows[0],
         institute: institute.rows[0],
-        payment: payment.rows[0],
+        payment: payment.rows,
         teachers: teachers.rows,
       },
     });
@@ -208,6 +208,84 @@ export const createPaymentBySuperadmin = async (req, res) => {
   } catch (error) {
     console.error("Error creating payment:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const newPayment = async (req, res) => {
+  try {
+    const superadminId = req.user.id;
+    const {
+      student_quota,
+      transaction_id,
+      schreenshot_url,
+      amount_paid,
+      email,
+    } = req.body;
+
+    // 1️⃣ Find the institute linked to this superadmin
+    const instituteResult = await pool.query(
+      "SELECT id FROM institutes WHERE superadmin_id = $1 LIMIT 1",
+      [superadminId]
+    );
+
+    if (instituteResult.rowCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No institute found for this superadmin",
+      });
+    }
+
+    const instituteId = instituteResult.rows[0].id;
+
+    // 2️⃣ Calculate dates
+    const paidOn = new Date();
+    const validUntil = new Date();
+    validUntil.setFullYear(validUntil.getFullYear() + 4);
+
+    // 3️⃣ Insert into payments table
+    const insertQuery = `
+      INSERT INTO payments (
+        student_quota,
+        transaction_id,
+        schreenshot_url,
+        amount_paid,
+        email,
+        paid_on,
+        valid_until,
+        payment_by,
+        institute_id,
+        created_at,
+        updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+      RETURNING *;
+    `;
+
+    const insertValues = [
+      student_quota,
+      transaction_id,
+      schreenshot_url,
+      amount_paid,
+      email,
+      paidOn,
+      validUntil,
+      superadminId,
+      instituteId,
+    ];
+
+    const result = await pool.query(insertQuery, insertValues);
+
+    res.status(201).json({
+      success: true,
+      message: "Payment added successfully",
+      payment: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error adding payment:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create payment record",
+      error: error.message,
+    });
   }
 };
 

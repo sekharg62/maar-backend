@@ -3,6 +3,7 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import { v4 as uuidv4 } from "uuid";
 import s3 from "../config/s3.js";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const router = express.Router();
 
@@ -47,6 +48,23 @@ router.post("/", upload.single("file"), (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Upload failed" });
+  }
+});
+router.post("/delete", async (req, res) => {
+  try {
+    const { key } = req.body;
+    if (!key) return res.status(400).json({ message: "File key required" });
+
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    await s3.send(command);
+    res.json({ success: true, message: "File deleted successfully" });
+  } catch (error) {
+    console.error("S3 delete error:", error);
+    res.status(500).json({ success: false, message: "Delete failed" });
   }
 });
 

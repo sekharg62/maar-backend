@@ -18,12 +18,7 @@ const router = express.Router();
 router.post("/login", loginTeacher);
 /*router.post("/resetPassword", resetTeacherPassword);*/
 router.get("/getDetails", verifyToken, getTeacherDetails);
-router.post(
-  "/uploadSignature",
-  verifyToken,
-  uploadTeacherSignatureS3.single("signature"),
-  uploadTeacherSignature
-);
+router.post("/upload-signature", verifyToken, uploadTeacherSignature);
 
 //perform by sueradmin
 router.post("/create", verifyToken, createTeacher);

@@ -5,6 +5,7 @@ import {
   getDepartments,
   getSuperadminDetails,
   loginSuperadmin,
+  newPayment,
   registerSuperadmin,
 } from "../controllers/superAdminController.js";
 
@@ -16,6 +17,8 @@ router.post("/login", loginSuperadmin);
 router.get("/getDetails", verifyToken, getSuperadminDetails);
 
 router.post("/createPayment", verifyToken, createPaymentBySuperadmin);
+
+router.post("/new-payment", verifyToken, newPayment);
 
 router.get("/getAllDepartments", getDepartments);
 
