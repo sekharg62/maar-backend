@@ -38,7 +38,7 @@ app.get("/test", async (req, res) => {
   try {
     const result = await pool.query("SELECT current_database()");
     //console.log("Query result:", result.rows); // debug log
-    console.log("resule:", result);
+    // console.log("resule:", result);
 
     res.send(`The database name is: ${result.rows[0].current_database}`);
   } catch (error) {

@@ -12,44 +12,37 @@ const upload = multer({
     s3,
     bucket: process.env.S3_BUCKET_NAME,
     key: function (req, file, cb) {
-      try {
-        const { type } = req.query; // type = "student-doc" | "payment"
-        const timestamp = Date.now();
-        const fileId = uuidv4();
-        const fileName = `${fileId}-${file.originalname}`;
-
-        let key = "";
-
-        if (type === "payment") {
-          const { superadminId, paymentId } = req.body;
-          key = `superadmins/${superadminId}/payments/${paymentId}/${timestamp}-${file.originalname}`;
-        } else if (type === "student-doc") {
-          const { teacherId, studentId, admissionYear, yearLevel } = req.body;
-          key = `students/${teacherId}/${admissionYear}/${studentId}/docs/${yearLevel}/${fileName}`;
-        } else {
-          return cb(new Error("Invalid upload type"));
-        }
-
-        cb(null, key);
-      } catch (err) {
-        cb(err);
-      }
+      const fileId = uuidv4();
+      const timestamp = Date.now();
+      const fileName = `${fileId}-${file.originalname}`;
+      // just give a temporary key
+      cb(null, `temp/${timestamp}-${fileName}`);
     },
   }),
 });
 
 router.post("/", upload.single("file"), (req, res) => {
-  try {
-    res.json({
-      success: true,
-      message: "File uploaded successfully",
-      fileUrl: req.file.location,
-      key: req.file.key,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Upload failed" });
+  const { type } = req.query;
+  const { teacherId, studentId, admissionYear, yearLevel } = req.body;
+
+  let key;
+  if (type === "student-doc") {
+    key = `students/${teacherId}/${admissionYear}/${studentId}/docs/${yearLevel}/${req.file.originalname}`;
+  } else if (type === "payment") {
+    const { superadminId, paymentId } = req.body;
+    key = `superadmins/${superadminId}/payments/${paymentId}/${req.file.originalname}`;
   }
+
+  // Optionally move/rename in S3 if needed using s3.copyObject + s3.deleteObject
+
+  res.json({
+    success: true,
+    message: "File uploaded successfully",
+    fileUrl: req.file.location,
+    key,
+  });
 });
+
 router.post("/delete", async (req, res) => {
   try {
     const { key } = req.body;

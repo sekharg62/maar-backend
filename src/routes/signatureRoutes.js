@@ -41,7 +41,7 @@ const upload = multer({
 router.post("/", upload.single("file"), async (req, res) => {
   try {
     const { type } = req.query;
-    console.log("type:", type);
+    // console.log("type:", type);
     const { teacherId, admissionYear } = req.body;
     const studentId = req.user.id;
 

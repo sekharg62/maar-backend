@@ -130,8 +130,7 @@ export const getTeacherDetails = async (req, res) => {
 };
 
 export const uploadStudentAndSignature = async (req, res) => {
-  console.log("Submitting to:", "/api/teacher/upload-students");
-
+  //  console.log("Submitting to:", "/api/teacher/upload-students");
   /*  try {
     const { year } = req.body;
     const teacherId = req.user.id;
@@ -349,7 +348,7 @@ export const deleteTeacher = async (req, res) => {
 export const automaticSubmit = async (req, res) => {
   const { roll, password } = req.body;
 
-  console.log("roll and pass::", roll, password);
+  // console.log("roll and pass::", roll, password);
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -370,7 +369,7 @@ export const automaticSubmit = async (req, res) => {
     document.querySelector('a[onclick*="openLoginPage"][onclick*="4"]').click();
   });
 
-  console.log("Clicked login for page 4");
+  // console.log("Clicked login for page 4");
 
   // STEP 2: Wait for the login modal to appear
   await page.waitForSelector("#username", { visible: true });
@@ -395,10 +394,10 @@ export const automaticSubmit = async (req, res) => {
     ),
   ]);
 
-  console.log("Redirected to mark entry page.");
+  // console.log("Redirected to mark entry page.");
 
   // STEP 5 (optional): Wait for navigation or check for login success
   await page.waitForNavigation(7000);
 
-  console.log("Login completed.");
+  // console.log("Login completed.");
 };

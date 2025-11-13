@@ -54,7 +54,7 @@ export const uploadStudentActivityS3 = multer({
     key: (req, file, cb) => {
       const insCode = req.user?.code; // from token
       const rollNo = req.user?.rollNo; // from token
-      console.log("ins codell,,rollno", insCode, rollNo);
+      // console.log("ins codell,,rollno", insCode, rollNo);
 
       if (!insCode || !rollNo) {
         return cb(new Error("Institute code or roll number missing"));
@@ -80,7 +80,7 @@ export const deleteFileFromS3 = async (fileUrl) => {
         Key: key,
       })
     );
-    console.log("File deleted successfully:", key);
+    // console.log("File deleted successfully:", key);
   } catch (err) {
     console.error("Error deleting file:", err);
     throw err;

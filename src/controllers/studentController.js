@@ -119,7 +119,7 @@ export const createStudentIndividual = async (req, res) => {
   }
 };
 export const createStudentsBulk = async (req, res) => {
-  console.log("bulk");
+  //  console.log("bulk");
   const client = await pool.connect();
   try {
     const teacherId = req.user.id;
@@ -335,7 +335,7 @@ export const getAllStudent = async (req, res) => {
 
 export const loginStudent = async (req, res) => {
   const { roll, password } = req.body;
-  console.log("details:", req.body);
+  //console.log("details:", req.body);
   if (!roll || !password) {
     return res
       .status(400)
@@ -491,7 +491,7 @@ export const getActivityDetails = async (req, res) => {
       studentData = result.rows;
 
       // console.log("Student Activity Data for Academic Year:", academicYearDiff);
-      console.log(studentData);
+      //  console.log(studentData);
 
       // Continue with your logic (e.g., res.json or further processing)
     } catch (error) {
@@ -2455,7 +2455,7 @@ export const getActivityDetails = async (req, res) => {
 
 export const activitySubmitByStudent = async (req, res) => {
   try {
-    console.log("Logged in student:", req.user);
+    // console.log("Logged in student:", req.user);
 
     const { formData, totalPoint } = req.body;
     const studentId = req.user.id;
@@ -2685,8 +2685,9 @@ export const verifyStudentDetails = async (req, res) => {
 export const uploadStudentSignature = async (req, res) => {
   try {
     const studentId = req.user?.id;
-    const signature = req.signature;
-    console.log("id and signatue:,", student);
+    const signature = req.body.signature;
+    console.log("signature:", signature);
+    /// console.log("id and signatue:,", student);
 
     // Update signature URL in DB
     await pool.query("UPDATE students SET signature = $1 WHERE id = $2", [
@@ -2706,8 +2707,8 @@ export const uploadStudentSignature = async (req, res) => {
 
 export const uploadIndividualFile = async (req, res) => {
   try {
-    console.log("Uploaded file info:", req.file); // S3 file details
-    console.log("Field Name:", req.body.fieldName); // tells which form field
+    // console.log("Uploaded file info:", req.file); // S3 file details
+    // console.log("Field Name:", req.body.fieldName); // tells which form field
 
     // Save only the file URL in DB if required
     const fileUrl = req.file.location; // multer-s3 provides this
@@ -2721,7 +2722,7 @@ export const uploadIndividualFile = async (req, res) => {
 export const deleteStudentFile = async (req, res) => {
   try {
     const { fieldName, fileUrl } = req.body;
-    console.log("file name is delte::", req.body);
+    //console.log("file name is delte::", req.body);
 
     if (!fileUrl) {
       return res
