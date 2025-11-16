@@ -11,7 +11,7 @@ import signatureRoutes from "./routes/signatureRoutes.js";
 import { swaggerUi, specs } from "../swagger.js";
 import errorHandling from "./middlewares/errorHandler.js";
 import verifyToken from "./middlewares/verifyToken.js";
-import jewelleryRoute from "./routes/JewelleryRoute.js";
+import jewelleryRoutes from "./routes/JewelleryRoute.js";
 
 dotenv.config();
 
@@ -29,7 +29,7 @@ app.use("/api/superadmin", superadminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoute);
-app.use("/api/jewellery", jewelleryRoute);
+app.use("/api/jewellery", jewelleryRoutes);
 
 app.use("/api/upload", verifyToken, uploadRoutes);
 app.use("/api/signature", verifyToken, signatureRoutes);
