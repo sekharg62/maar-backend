@@ -31,6 +31,8 @@ router.post("/", upload.single("file"), (req, res) => {
   } else if (type === "payment") {
     const { superadminId, paymentId } = req.body;
     key = `superadmins/${superadminId}/payments/${paymentId}/${req.file.originalname}`;
+  } else if (type === "jewellery") {
+    key = `jewellery/${req.file.originalname}`;
   }
 
   // Optionally move/rename in S3 if needed using s3.copyObject + s3.deleteObject

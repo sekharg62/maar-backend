@@ -45,12 +45,14 @@ export const createStudentIndividual = async (req, res) => {
 
     // 3. Get latest payment info for institute
     const paymentResult = await pool.query(
-      `SELECT student_quota, students_registered 
+      `SELECT id,student_quota, students_registered 
        FROM payments 
        WHERE institute_id = $1 
-       ORDER BY paid_on DESC LIMIT 1`,
+       ORDER BY created_at DESC LIMIT 1`,
       [instituteId]
     );
+
+    console.log(paymentResult.rows);
 
     if (!paymentResult.rows.length) {
       return res
@@ -58,7 +60,7 @@ export const createStudentIndividual = async (req, res) => {
         .json({ error: "Superadmin hasn't made any payment." });
     }
 
-    const { student_quota, students_registered } = paymentResult.rows[0];
+    const { id, student_quota, students_registered } = paymentResult.rows[0];
 
     if (students_registered >= student_quota) {
       return res.status(403).json({
@@ -108,8 +110,8 @@ export const createStudentIndividual = async (req, res) => {
     await pool.query(
       `UPDATE payments 
        SET students_registered = students_registered + 1 
-       WHERE institute_id = $1`,
-      [instituteId]
+       WHERE id = $1`,
+      [id]
     );
 
     return res.status(201).json({ message: "Student created successfully." });

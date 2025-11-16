@@ -160,7 +160,7 @@ export const getSuperadminDetails = async (req, res) => {
 
     // 3. Get payment details
     const payment = await pool.query(
-      "SELECT id,amount_paid,student_quota,students_registered,paid_on,valid_until,created_at,updated_at,is_approve,schreenshot_url FROM payments WHERE institute_id = $1",
+      "SELECT id,amount_paid,student_quota,students_registered,paid_on,valid_until,created_at,updated_at,status,schreenshot_url FROM payments WHERE institute_id = $1",
       [institute.rows[0]?.id]
     );
 

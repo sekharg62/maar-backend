@@ -66,7 +66,7 @@ export const getTeacherDetails = async (req, res) => {
 
     // Fetch teacher details
     const teacherResult = await pool.query(
-      `SELECT id, name, email,mobile_no,signature, department, created_at, updated_at 
+      `SELECT id, name, email,mobile_no,signature, department,superadmin_id, created_at, updated_at 
    FROM teachers 
    WHERE id = $1`,
       [teacherId]
@@ -76,8 +76,26 @@ export const getTeacherDetails = async (req, res) => {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
-    const teacher = teacherResult.rows[0];
+    const teacherDetails = teacherResult.rows[0];
 
+    const superadminId = teacherDetails.superadmin_id;
+
+    const instituteResult = await pool.query(
+      `SELECT * FROM institutes WHERE superadmin_id = $1`,
+      [superadminId]
+    );
+    const institute = instituteResult.rows[0];
+    const teacher = {
+      id: teacherDetails.id,
+      name: teacherDetails.name,
+      email: teacherDetails.email,
+      mobile_no: teacherDetails.mobile_no,
+      signature: teacherDetails.signature,
+      department: teacherDetails.department,
+      payment: institute.auto_submit_active,
+      created_at: teacherDetails.created_at,
+      updated_at: teacherDetails.updated_at,
+    };
     // Fetch students with their activities
     const studentResult = await pool.query(
       `SELECT s.id, s.name, s.admission_year, s.mobile_no,

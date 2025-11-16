@@ -17,14 +17,14 @@ const router = express.Router();
 //perform by teacher
 router.post("/login", loginTeacher);
 /*router.post("/resetPassword", resetTeacherPassword);*/
-router.get("/getDetails", verifyToken, getTeacherDetails);
+router.get("/get-details", verifyToken, getTeacherDetails);
 router.post("/upload-signature", verifyToken, uploadTeacherSignature);
 
 //perform by sueradmin
 router.post("/create", verifyToken, createTeacher);
-router.get("/getAllTeacher", verifyToken, getAllTeachers);
+router.get("/get-all-teacher", verifyToken, getAllTeachers);
 router.put("/update/:id", verifyToken, updateTeacher);
 router.delete("/delete/:id", verifyToken, deleteTeacher);
 
-router.post("/automateSubmit", automaticSubmit);
+router.post("/university", automaticSubmit);
 export default router;
