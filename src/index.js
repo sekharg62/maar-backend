@@ -11,7 +11,7 @@ import signatureRoutes from "./routes/signatureRoutes.js";
 import { swaggerUi, specs } from "../swagger.js";
 import errorHandling from "./middlewares/errorHandler.js";
 import verifyToken from "./middlewares/verifyToken.js";
-import jewelleryRoutes from "./routes/JewelleryRoute.js";
+import jewelleryRoutes from "./routes/jewelleryRoute.js";
 
 dotenv.config();
 
